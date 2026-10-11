@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Person</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container narrow">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Edit Profile</p>
+          <h1>Update Person Information</h1>
+        </div>
+        <a href="/" class="link-btn">Back to Dashboard</a>
+      </header>
+
+      <div class="panel form-panel">
+        <form action="/people/<%= person.id %>/update" method="POST" enctype="multipart/form-data">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" value="<%= person.name %>" required />
+            </div>
+
+            <div class="form-group">
+              <label for="birth_date">Date of Birth</label>
+              <input type="date" id="birth_date" name="birth_date" value="<%= person.birth_date || '' %>" />
+            </div>
+
+            <div class="form-group">
+              <label for="profession">Profession</label>
+              <input type="text" id="profession" name="profession" value="<%= person.profession || '' %>" />
+            </div>
+
+            <div class="form-group">
+              <label for="education">Education</label>
+              <input type="text" id="education" name="education" value="<%= person.education || '' %>" />
+            </div>
+
+            <div class="form-group">
+              <label for="country">Country</label>
+              <input type="text" id="country" name="country" value="<%= person.country || '' %>" />
+            </div>
+
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" name="city" value="<%= person.city || '' %>" />
+            </div>
+
+            <div class="form-group">
+              <label for="status">Status</label>
+              <select id="status" name="status">
+                <option value="Active" <%= person.status === 'Active' ? 'selected' : '' %>>Active</option>
+                <option value="Inactive" <%= person.status === 'Inactive' ? 'selected' : '' %>>Inactive</option>
+                <option value="Featured" <%= person.status === 'Featured' ? 'selected' : '' %>>Featured</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="photo">Replace Photo</label>
+              <input type="file" id="photo" name="photo" accept="image/*" />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="bio">Bio</label>
+              <textarea id="bio" name="bio"><%= person.bio || '' %></textarea>
+            </div>
+
+            <% if (person.photo) { %>
+              <div class="form-group full-width">
+                <label>Current Photo</label>
+                <img src="<%= person.photo %>" alt="current photo" class="current-photo" />
+                <input type="hidden" name="existing_photo" value="<%= person.photo %>" />
+              </div>
+            <% } %>
+          </div>
+
+          <button type="submit" class="primary-btn">Update Profile</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

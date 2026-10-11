@@ -1,0 +1,19 @@
+{
+  "name": "people-directory-advanced",
+  "version": "1.0.0",
+  "description": "Advanced full-stack people directory with profile upload, search, filter, edit and delete",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.16"
+  }
+}

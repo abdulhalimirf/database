@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>People Directory Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">People Directory</p>
+          <h1>Community Profiles</h1>
+        </div>
+        <div class="header-actions">
+          <span class="status-pill">Live Records</span>
+        </div>
+      </header>
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <span>Total People</span>
+          <strong><%= stats.total %></strong>
+        </div>
+        <div class="stat-card">
+          <span>Countries</span>
+          <strong><%= stats.countries %></strong>
+        </div>
+        <div class="stat-card">
+          <span>Professions</span>
+          <strong><%= stats.professions %></strong>
+        </div>
+        <div class="stat-card">
+          <span>Last 7 Days</span>
+          <strong><%= stats.recent %></strong>
+        </div>
+      </section>
+
+      <% if (success) { %>
+        <div class="alert success">Person added successfully.</div>
+      <% } %>
+
+      <% if (updated) { %>
+        <div class="alert success">Profile updated successfully.</div>
+      <% } %>
+
+      <% if (deleted) { %>
+        <div class="alert danger">Person deleted successfully.</div>
+      <% } %>
+
+      <div class="layout">
+        <aside class="panel form-panel">
+          <h2>Add New Person</h2>
+
+          <form action="/people" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="photo">Profile Photo</label>
+              <input type="file" id="photo" name="photo" accept="image/*" />
+            </div>
+
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" placeholder="Full name" required />
+            </div>
+
+            <div class="form-group">
+              <label for="birth_date">Date of Birth</label>
+              <input type="date" id="birth_date" name="birth_date" />
+            </div>
+
+            <div class="form-group">
+              <label for="profession">Profession</label>
+              <input type="text" id="profession" name="profession" placeholder="e.g. Software Engineer" />
+            </div>
+
+            <div class="form-group">
+              <label for="education">Education</label>
+              <input type="text" id="education" name="education" placeholder="e.g. B.Sc in Computer Science" />
+            </div>
+
+            <div class="form-group">
+              <label for="country">Country</label>
+              <input type="text" id="country" name="country" placeholder="e.g. Bangladesh" />
+            </div>
+
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" name="city" placeholder="e.g. Dhaka" />
+            </div>
+
+            <div class="form-group">
+              <label for="status">Status</label>
+              <select id="status" name="status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Featured">Featured</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="bio">Short Bio</label>
+              <textarea id="bio" name="bio" placeholder="Write a brief description..."></textarea>
+            </div>
+
+            <button type="submit" class="primary-btn">Save Profile</button>
+          </form>
+        </aside>
+
+        <main class="panel people-panel">
+          <div class="toolbar">
+            <div>
+              <h2>Saved Profiles</h2>
+            </div>
+
+            <form method="GET" action="/" class="filters">
+              <input
+                type="text"
+                name="q"
+                value="<%= query %>"
+                placeholder="Search by name, profession, country..."
+              />
+
+              <select name="country">
+                <option value="">All Countries</option>
+                <% countries.forEach(country => { %>
+                  <option value="<%= country.country %>" <%= selectedCountry === country.country ? 'selected' : '' %>>
+                    <%= country.country %>
+                  </option>
+                <% }) %>
+              </select>
+
+              <select name="profession">
+                <option value="">All Professions</option>
+                <% professions.forEach(profession => { %>
+                  <option value="<%= profession.profession %>" <%= selectedProfession === profession.profession ? 'selected' : '' %>>
+                    <%= profession.profession %>
+                  </option>
+                <% }) %>
+              </select>
+
+              <button type="submit" class="secondary-btn">Filter</button>
+              <a href="/" class="link-btn">Reset</a>
+            </form>
+          </div>
+
+          <% if (people.length === 0) { %>
+            <div class="empty-state">
+              No records found. Try another search or add a new person.
+            </div>
+          <% } else { %>
+            <div class="people-grid">
+              <% people.forEach(person => { %>
+                <article class="person-card">
+                  <% if (person.photo) { %>
+                    <img class="person-photo" src="<%= person.photo %>" alt="<%= person.name %>" />
+                  <% } else { %>
+                    <img
+                      class="person-photo placeholder"
+                      src="https://placehold.co/800x600/edf3ff/2d6cdf?text=<%= encodeURIComponent(person.name.slice(0,1)) %>"
+                      alt="placeholder"
+                    />
+                  <% } %>
+
+                  <div class="person-body">
+                    <div class="card-header-row">
+                      <h3><%= person.name %></h3>
+                      <span class="mini-badge"><%= person.status || 'Active' %></span>
+                    </div>
+
+                    <ul class="meta-list">
+                      <% if (person.birth_date) { %>
+                        <li><strong>Birth:</strong> <%= person.birth_date %></li>
+                      <% } %>
+
+                      <% if (person.profession) { %>
+                        <li><strong>Profession:</strong> <%= person.profession %></li>
+                      <% } %>
+
+                      <% if (person.education) { %>
+                        <li><strong>Education:</strong> <%= person.education %></li>
+                      <% } %>
+
+                      <% if (person.country || person.city) { %>
+                        <li><strong>Location:</strong> <%= [person.city, person.country].filter(Boolean).join(', ') %></li>
+                      <% } %>
+                    </ul>
+
+                    <% if (person.bio) { %>
+                      <p class="bio"><%= person.bio %></p>
+                    <% } %>
+
+                    <div class="card-actions">
+                      <a href="/people/<%= person.id %>/edit" class="small-btn edit">Edit</a>
+                      <form action="/people/<%= person.id %>/delete" method="POST" class="delete-form">
+                        <button type="submit" class="small-btn delete">Delete</button>
+                      </form>
+                    </div>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          <% } %>
+        </main>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
